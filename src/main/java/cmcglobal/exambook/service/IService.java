@@ -7,7 +7,7 @@ import cmcglobal.exambook.exception.ExceptionHandle;
 public interface IService<E>  {
     ResponseData findAll();
     ResponseData findById(Long id);
-    ResponseData findByCode(String name);
+    ResponseData getBookOfProvider(String name);
 
 
     ResponseData add(E elemenInput) throws ExceptionHandle;

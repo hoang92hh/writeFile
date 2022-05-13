@@ -27,7 +27,7 @@ public class CustomerService implements IService<Customer>, ICustomerService {
     }
 
     @Override
-    public ResponseData findByCode(String name) {
+    public ResponseData getBookOfProvider(String name) {
         return null;
     }
 
