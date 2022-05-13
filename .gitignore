@@ -18,7 +18,7 @@ target/
 *.iws
 *.iml
 *.ipr
-fileExcel
+fileExcel/**.xlsx
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/

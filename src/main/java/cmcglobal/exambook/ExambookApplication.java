@@ -7,10 +7,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EnableJpaRepositories
-public class EbookApplication {
+public class ExambookApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(EbookApplication.class, args);
+		SpringApplication.run(ExambookApplication.class, args);
 	}
 
 
