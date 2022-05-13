@@ -5,21 +5,28 @@ import cmcglobal.ebook.entity.Book;
 import cmcglobal.ebook.entity.Provider;
 import cmcglobal.ebook.exception.ExceptionHandle;
 import cmcglobal.ebook.exception.ExceptionResponse;
+import cmcglobal.ebook.exception.ExceptionGetData;
 import cmcglobal.ebook.model.response.ProviderResponse;
 import cmcglobal.ebook.repository.IBookRepository;
 import cmcglobal.ebook.repository.IProviderRepository;
+import cmcglobal.ebook.repository.impl.IProviderRepositoryExtend;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProviderService implements IServiceAddGetConditions <Provider> {
+public class ProviderService implements IProviderService {
 
     @Autowired
 
     IProviderRepository providerRepository;
+
+    @Autowired
+    IProviderRepositoryExtend providerRepositoryExtend;
 
     @Autowired
     IBookRepository bookRepository;
@@ -56,7 +63,7 @@ public class ProviderService implements IServiceAddGetConditions <Provider> {
     }
 
     @Override
-    public ResponseData findByCode(String name) {
+    public ResponseData getBookOfProvider(String name) {
         ResponseData responseData = new ResponseData();
         Provider provider = providerRepository.getProviderByCode(name);
 
@@ -205,9 +212,8 @@ public class ProviderService implements IServiceAddGetConditions <Provider> {
         return responseData;
     }
 
-
     @Override
-    public ResponseData getAllByRequest(Provider inputElement) {
+    public ResponseData getAllProivderByConditions(Provider inputElement) {
         ResponseData responseData = new ResponseData();
         List<?> providerList = providerRepository.getAllProviderByConditions(inputElement.getCode(), inputElement.getName());
         responseData.setData(providerList);
@@ -218,13 +224,128 @@ public class ProviderService implements IServiceAddGetConditions <Provider> {
     }
 
     @Override
-    public ResponseData getAllResponseProvider(String[] codes) {
+    public ResponseData saveAll(Provider[] providers) {
         ResponseData responseData = new ResponseData();
-//        List<?> providerList = providerRepository.getAllResponseProvider(codes);
-//        responseData.setData(providerList);
-        responseData.setMessage("FindAllByConditions");
-        responseData.setStatus("Success");
-        responseData.setCode("200");
+        try {
+            ExceptionGetData.checkDuplicateProvider(providers);
+            if(checkDuplicateData( providers)){
+                List<Provider> providerList = new ArrayList<>(Arrays.asList(providers));
+                providerRepository.saveAll(providerList);
+                responseData.setData(providerList);
+                responseData.setMessage("Save All");
+                responseData.setStatus("Success");
+                responseData.setCode("200");
+            }else{
+                responseData.setMessage("The Array has the object which is exist in Database");
+                responseData.setStatus("Fail");
+                responseData.setCode("100");
+            }
+
+
+        }
+        catch (ExceptionHandle e) {
+
+            responseData.setMessage(e.getMessage());
+            responseData.setStatus("ERROR");
+            responseData.setCode("400");
+        }
+        catch (Exception e) {
+            responseData.setMessage(e.getMessage());
+
+        }
+
         return responseData;
+    }
+
+
+    public ResponseData saveAllByHibernate(Provider[] providers) {
+        ResponseData responseData = new ResponseData();
+        try {
+            ExceptionGetData.checkDuplicateProvider(providers);
+            if(checkDuplicateData( providers)){
+                providerRepositoryExtend.saveAllProviderByHibernate(providers);
+
+                responseData.setData(providers);
+                responseData.setMessage("Save All");
+                responseData.setStatus("Success");
+                responseData.setCode("200");
+            }else{
+                responseData.setMessage("The Array has the object which is exist in Database");
+                responseData.setStatus("Fail");
+                responseData.setCode("100");
+            }
+
+
+        }
+        catch (ExceptionHandle e) {
+
+            responseData.setMessage(e.getMessage());
+            responseData.setStatus("ERROR");
+            responseData.setCode("400");
+        }
+        catch (Exception e) {
+            responseData.setMessage(e.getMessage());
+
+        }
+
+        return responseData;
+    }
+
+    @Override
+    public ResponseData getAllMultiCode(String[] codes) {
+        ResponseData responseData = new ResponseData();
+        String stringQuery=setQueryStatement(codes);
+
+        try {
+
+//           get All by hibernate repository extends
+            List<Provider> providerList =   providerRepositoryExtend.findProviderByCodesList(stringQuery);
+
+            responseData.setData(providerList);
+            responseData.setMessage("FindAllByMultiCode");
+            responseData.setStatus("Success");
+            responseData.setCode("200");
+        }
+        catch (Exception e){
+            responseData.setMessage(e.getMessage());
+        }
+
+
+        return responseData;
+    }
+
+
+
+    private String setQueryStatement(String[] codes){
+        String stringQuery= "Select P.code FROM  Provider P WHERE ";
+        int length = codes.length;
+        String stringAppend = "";
+        for (int i = 0; i <length-1; i++) {
+            stringAppend += " P.code ='";
+
+            stringAppend += codes[i];
+            stringAppend += "' OR ";
+
+        }
+        stringAppend += "P.code = '";
+        stringAppend += codes[length-1];
+        stringAppend += "' ";
+
+
+        stringQuery += stringAppend;
+        System.out.println(stringQuery);
+
+        return stringQuery;
+    }
+
+    private boolean checkDuplicateData(Provider[] providers){
+        boolean check = true;
+        for(Provider provider : providers){
+            Provider provider1 = providerRepository.getProviderByCode(provider.getCode());
+            if(provider1!=null){
+                check=false;
+            }
+        }
+        return check;
     }
 }

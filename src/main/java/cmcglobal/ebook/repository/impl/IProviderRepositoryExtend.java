@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface IProviderRepositoryExtend {
-    List<ProviderResponse> getAllResponseProvider(String[] xbCode);
-
+    List<Provider> findProviderByCodesList(String stringQuery);
+    void saveAllProviderByHibernate(Provider[] providerList);
 }

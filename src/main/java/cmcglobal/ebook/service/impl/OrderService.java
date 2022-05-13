@@ -25,7 +25,7 @@ public class OrderService implements IService<Order> {
     }
 
     @Override
-    public ResponseData findByCode(String name) {
+    public ResponseData getBookOfProvider(String name) {
         return null;
     }
 

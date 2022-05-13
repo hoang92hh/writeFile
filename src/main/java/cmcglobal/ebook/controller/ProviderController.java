@@ -1,22 +1,14 @@
 package cmcglobal.ebook.controller;
 
 import cmcglobal.ebook.common.ResponseData;
-import cmcglobal.ebook.entity.Book;
 import cmcglobal.ebook.entity.Provider;
 import cmcglobal.ebook.exception.ExceptionHandle;
-import cmcglobal.ebook.model.request.ProviderRequest;
-import cmcglobal.ebook.service.IService;
-import cmcglobal.ebook.service.impl.IServiceAddGetConditions;
+import cmcglobal.ebook.service.impl.IProviderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(value="/provider")
@@ -24,7 +16,7 @@ public class ProviderController {
     private static final Logger log = LoggerFactory.getLogger(BookController.class);
 
     @Autowired
-    IServiceAddGetConditions providerService ;
+    IProviderService providerService ;
 
     @GetMapping(value="/getAll")
     public ResponseData getAllProvider(){
@@ -61,24 +53,29 @@ public class ProviderController {
 
     }
 
-    @GetMapping(value="/getBookOfProvider")
-    public ResponseData getBookOfProvider(@Param("code") String code){
-        return providerService.findByCode(code);
+    @GetMapping(value="/getAllProviderByConditions")
+    public ResponseData getAllProviderByConditions(@RequestBody Provider providerRequest){
+        return providerService.getAllProivderByConditions(providerRequest);
+    }
+    @GetMapping(value="/getFiveBookOfProvider")
+    public ResponseData getAllProviderByConditions(@Param("code") String code){
+        return providerService.getBookOfProvider(code);
     }
 
-
-
-
-    @GetMapping(value="/getByRequest")
-    public ResponseData getProviderByRequest(@RequestBody Provider providerRequest){
-        return providerService.getAllByRequest(providerRequest);
+    @PostMapping(value="/saveAll")
+    public ResponseData addAllProvider(@RequestBody Provider[] provider) throws ExceptionHandle {
+        return providerService.saveAll(provider);
     }
-//
-//    @GetMapping(value="/getAllByMultipleData")
-//    public ResponseData getProviderByRequest(String[] nxbCode){
-//        return providerService.getAllByRequest(nxbCode);
-//    }
 
+    @PostMapping(value="/saveAllByHibernate")
+    public ResponseData addAllProviderByHQL(@RequestBody Provider[] provider) throws ExceptionHandle {
+        return providerService.saveAllByHibernate(provider);
+    }
+
+    @GetMapping(value="/getMultiCode")
+    public ResponseData getMultiCode( @RequestBody String[] codes){
+        return providerService.getAllMultiCode(codes);
+    }
 
 
 
