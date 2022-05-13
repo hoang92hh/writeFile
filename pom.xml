@@ -48,6 +48,13 @@
 			<version>2.0.1.Final</version>
 		</dependency>
 
+		<!-- //apache POI  doc ghi file xlsx -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.17</version>
+		</dependency>
+
 
 	</dependencies>
 
