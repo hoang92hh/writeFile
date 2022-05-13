@@ -6,6 +6,7 @@ import cmcglobal.exambook.entity.Provider;
 import cmcglobal.exambook.exception.ExceptionHandle;
 import cmcglobal.exambook.exception.ExceptionResponse;
 import cmcglobal.exambook.exception.ExceptionGetData;
+import cmcglobal.exambook.model.response.Iprovider;
 import cmcglobal.exambook.model.response.ProviderResponse;
 import cmcglobal.exambook.repository.IBookRepository;
 import cmcglobal.exambook.repository.IProviderRepository;
@@ -347,5 +348,23 @@ public class ProviderService implements IProviderService {
             }
         }
         return check;
+    }
+
+    @Override
+    public ResponseData writeFile(Provider inputElement) {
+        ResponseData responseData = new ResponseData();
+        List<Iprovider> providerList = providerRepository.getAllProviderByConditions(inputElement.getCode(), inputElement.getName());
+        List<Provider> providers = new ArrayList<>();
+        for (Iprovider p: providerList
+        ) {
+            Provider provider = new Provider(p.getCode(),p.getName());
+            providers.add(provider);
+        }
+
+        FileService.writeFile( providers);
+        responseData.setMessage(" Writing file is success");
+        responseData.setStatus("Success");
+        responseData.setCode("200");
+        return responseData;
     }
 }

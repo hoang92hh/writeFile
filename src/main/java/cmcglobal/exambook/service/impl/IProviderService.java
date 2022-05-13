@@ -13,4 +13,6 @@ public interface IProviderService extends IService<Provider> {
     ResponseData saveAll(Provider[] provider);
 
     ResponseData saveAllByHibernate(Provider[] provider);
+
+    ResponseData writeFile(Provider providerRequest);
 }
